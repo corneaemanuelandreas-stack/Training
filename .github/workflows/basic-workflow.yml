@@ -5,7 +5,7 @@ on:
         inputs:
             name:
                 description: "Greeting for a pearson"
-                default: "Hello"
+                default: " "
                 required: true
                 type: string
             
