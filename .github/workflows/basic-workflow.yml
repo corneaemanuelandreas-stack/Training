@@ -21,7 +21,7 @@ on:
                     - Berlin
 
             fav-color-blue: 
-                description: "Is your favorite colot blue?"
+                description: "Is your favorite color blue?"
                 required: true
                 type: boolean 
 
