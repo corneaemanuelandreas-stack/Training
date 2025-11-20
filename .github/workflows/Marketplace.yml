@@ -18,17 +18,19 @@ jobs:
             - name: Setup .NET Core
               uses: actions/setup-dotnet@v4.1.0
               with:
-                dotnet-version: "10.0.x"
+                dotnet-version: "8.0.x"
 
 
             - name: Restore dependencies
-              run: dotnet restore "${{ github.workspace }}src/my-web-app.sln" 
+              run: dotnet restore "${{ github.workspace }}/src/mywebapp.sln"
 
             - name: Build
-              run: dotnet build "${{ github.workspace }}src/my-web-app.sln" --no-restore --configuration Release
+              run: dotnet build "${{ github.workspace }}/src/mywebapp.sln" --no-restore --configuration Release
 
-            - name: Test 
-              run: dotnet test "${{github.workspace}}/src/my-web-app.sln" --no-restore --logger:"junit;LogFilePath=${{ github.workspace }}/results/test-results.xml"
+            - name: Test
+              run: |
+                mkdir -p "${{ github.workspace }}/results"
+                dotnet test "${{ github.workspace }}/src/mywebapp.sln" --no-restore --logger:"junit;LogFilePath=${{ github.workspace }}/results/test-results.xml"
 
 
 
@@ -50,7 +52,7 @@ jobs:
 
 
             - name: Publish
-              run: dotnet publish "${{github.workspace}}/src/my-web-app/my-web-app.csproj" -c Release -o mywebapp
+              run: dotnet publish "${{ github.workspace }}/src/mywebapp/mywebapp.csproj" -c Release -o mywebapp
 
             - name: Upload build artifact
               uses: actions/upload-artifact@v4
