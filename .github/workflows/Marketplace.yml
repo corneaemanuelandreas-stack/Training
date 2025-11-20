@@ -1,0 +1,50 @@
+name: Pull_Request_Build_Test
+
+on: 
+    pull_request:
+        branches:
+            -main
+    workflow_dispatch:
+
+
+jobs: 
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup .NET Core
+              uses: actions/setup-dotnet@v4.1.0
+              with:
+                dotnet-version: "8.0.x"
+
+
+            - name: Restore dependencies
+              run: dotnet restore "${{github.workspace}}/src/my-web-app.sln" 
+
+            - name: Build
+              run: dotnet build "${{ github.workspace}}/src/my-web-app.sln" --no-restore --configuration
+
+            - name: Test 
+              run: dotnet test "${{ github.workspace}}/src/my-web-app.sln" --no-restore --logger:"juinit;LogFilePath=${{ github.workspace}}/results/test-results.xml"
+
+            - name: Create test summary 
+              uses: test-summary/action@v2.4
+              with: 
+                paths: ${{ github.workspace }}/results/*.xml
+                output: ${{ github.workspace }}/results/summary.md
+                show: "all"
+              if: always()
+
+            - name: Add Test Results To Job Summary
+              run: |
+                echo "TEST RESULTS:" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $ GITHUB_STEP_SUMMARY 
+                cat "${{ github.workspace }}/results/summary.md" >> GITHUB_STEP_SUMMARY
+                if: always()
+                 
+
+
+
