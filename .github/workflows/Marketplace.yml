@@ -3,7 +3,7 @@ name: Pull_Request_Build_Test
 on: 
     pull_request:
         branches:
-            -main
+            - main
     workflow_dispatch:
 
 
@@ -25,25 +25,32 @@ jobs:
               run: dotnet restore "${{github.workspace}}/src/my-web-app.sln" 
 
             - name: Build
-              run: dotnet build "${{ github.workspace}}/src/my-web-app.sln" --no-restore --configuration
+              run: dotnet build "${{ github.workspace}}/src/my-web-app.sln" --no-restore --configuration Release
 
             - name: Test 
-              run: dotnet test "${{ github.workspace}}/src/my-web-app.sln" --no-restore --logger:"juinit;LogFilePath=${{ github.workspace}}/results/test-results.xml"
+              run: |
+                mkdir -p "${{ github.workspace }}/results"
+                dotnet test "${{ github.workspace }}/src/my-web-app.sln" \
+                    --no-restore \
+                    --logger:"junit;LogFilePath=${{ github.workspace }}/results/test-results.xml"
+
 
             - name: Create test summary 
+              if: always()
               uses: test-summary/action@v2.4
               with: 
                 paths: ${{ github.workspace }}/results/*.xml
                 output: ${{ github.workspace }}/results/summary.md
                 show: "all"
-              if: always()
+
 
             - name: Add Test Results To Job Summary
+              if: always()
               run: |
                 echo "TEST RESULTS:" >> $GITHUB_STEP_SUMMARY
                 echo "" >> $GITHUB_STEP_SUMMARY 
                 cat "${{ github.workspace }}/results/summary.md" >> $GITHUB_STEP_SUMMARY
-                if: always()
+
 
             - name: Publish
               run: dotnet publish "${{github.workspace}}/src/my-web-app/my-web-app.csproj" -c Release -o mywebapp
