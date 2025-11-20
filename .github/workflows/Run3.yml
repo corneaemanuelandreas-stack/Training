@@ -6,6 +6,7 @@ on:
             run_jobs_2:
                 description: "Have to run 3 jobs"
                 required: true 
+                default: true
                 type: boolean
 
 jobs: 
