@@ -3,10 +3,10 @@ name: Run 3 Jobs
 on: 
     workflow_dispatch:
         inputs:
-            run_jobs:
+            run_jobs_2:
                 description: "Have to run 3 jobs"
                 required: true 
-                default: "true"
+                type: boolean
 
 jobs: 
     job-1:
@@ -14,7 +14,7 @@ jobs:
         runs-on: ubuntu-latest
         steps: 
             - name: "Run Job"
-              run: echo "Job 1 completed"
+              run: echo "Job 1 completed. Run Job 2 equals ${{ github.event.inputs.run_jobs_2}}"
 
     job-2: 
         name: "Run Job 2"
